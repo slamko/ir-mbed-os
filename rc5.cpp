@@ -1,43 +1,21 @@
 #include "mbed.h"
+#include "rc5.h"
 #include <map>
+#include <list>
 
 namespace RC5 {
-
     static constexpr size_t COMMAND_LEN = 14;
     static const microseconds long_pulse = 1778us;
     static const microseconds short_pulse = 889us;
     static const microseconds med_pulse = (long_pulse + short_pulse) / 2;
     static const microseconds max_long_pulse = 3000us;
 
-    #define GET_BIT(X, BIT) ((X & (1 << BIT)) >> BIT)
-
-    class Decoder {
-    public:
-        bool prev_signal_val;
-        InterruptIn signal;
-        Decoder(PinName pin, std::map<uint8_t, Callback<void()>> commands);
-    
-    private:
-        bool good_startcode();
-        void decode_bit(uint8_t bit);
-        void decode_reset();
-        void decode_fall();
-        void decode_rise();
-
-        Timer clock;
-        bool decoding = false;
-
-        std::map<uint8_t, Callback<void()>> commands;
-        uint16_t command;
-        uint8_t cur_bit;
-    };
-
     Decoder::Decoder(PinName pin, std::map<uint8_t, Callback<void()>> commands) 
         : signal{pin}, commands{commands} 
     {
         signal.mode(PullNone);
-        signal.rise(decode_rise);
-        signal.fall(&decode_fall);
+        signal.rise(&on_edge);
+        signal.fall(&on_edge);
     };
     
     bool Decoder::good_startcode() {
@@ -98,18 +76,22 @@ namespace RC5 {
         decode_bit(1);
     }
 
-    class RC5 {
-        
-    }
-    static Decoder decoders_list;
+    static std::list<Decoder> decoders_list;
 
-    void init(Decoder *decoders) {
+    void init(std::list<Decoder> decoders) {
         decoders_list = decoders;    
     }
 
-    void on_fall() {
+    void on_edge() {
         for (auto &dec : decoders_list) {
-
+            if (dec.signal.read() != dec.prev_signal_val) {
+                dec.prev_signal_val = !dec.prev_signal_val;
+            }
+            if (dec.signal.read()) {
+                dec.decode_rise();
+            } else {
+                dec.decode_fall();
+            }
         }
     }
 }
