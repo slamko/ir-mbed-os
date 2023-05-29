@@ -12,10 +12,14 @@ namespace RC5 {
         Decoder(PinName pin, std::map<uint8_t, Callback<void()>> commands);
     
     private:
+        friend void on_edge();
+
         void decode_fall();
         void decode_rise();
+
         int prev_signal_val = 1;
         InterruptIn signal;
+
         bool good_startcode();
         void decode_bit(uint8_t bit);
         void decode_reset();

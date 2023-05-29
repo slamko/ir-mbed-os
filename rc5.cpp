@@ -11,6 +11,8 @@ namespace RC5 {
     static const std::chrono::microseconds max_long_pulse = 3000us;
 
     static std::vector<Decoder *> decoders_list;
+
+    void on_edge();
     
     Decoder::Decoder(PinName pin, std::map<uint8_t, Callback<void()>> commands) 
         : signal{pin}, commands{commands} 
