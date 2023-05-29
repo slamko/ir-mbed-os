@@ -15,9 +15,12 @@ RC5::Decoder d1 {D13, {
     {35, &blink}
 }};
 
+RC5::Decoder d2 {D12, {
+    {24, &blink}
+}};
+
 int main()
 {
-    RC5::init({&d1});
     
     while (true) {
     }

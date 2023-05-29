@@ -9,13 +9,13 @@ namespace RC5 {
 
     class Decoder {
     public:
-        int prev_signal_val = 1;
-        InterruptIn signal;
         Decoder(PinName pin, std::map<uint8_t, Callback<void()>> commands);
     
+    private:
         void decode_fall();
         void decode_rise();
-    private:
+        int prev_signal_val = 1;
+        InterruptIn signal;
         bool good_startcode();
         void decode_bit(uint8_t bit);
         void decode_reset();
@@ -27,7 +27,4 @@ namespace RC5 {
         uint16_t command;
         uint8_t cur_bit;
     };
-
-    void on_edge();
-    void init(std::vector<Decoder *> decoders);
 }

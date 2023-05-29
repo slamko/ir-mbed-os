@@ -10,12 +10,15 @@ namespace RC5 {
     static const std::chrono::microseconds med_pulse = (long_pulse + short_pulse) / 2;
     static const std::chrono::microseconds max_long_pulse = 3000us;
 
+    static std::vector<Decoder *> decoders_list;
+    
     Decoder::Decoder(PinName pin, std::map<uint8_t, Callback<void()>> commands) 
         : signal{pin}, commands{commands} 
     {
         signal.mode(PullNone);
         signal.rise(&on_edge);
         signal.fall(&on_edge);
+        decoders_list.push_back(this);
     };
     
     bool Decoder::good_startcode() {
@@ -80,14 +83,8 @@ namespace RC5 {
         decode_bit(1);
     }
 
-    static std::vector<Decoder *> decoders_list;
-
-    void init(std::vector<Decoder *> decoders) {
-        decoders_list = decoders;    
-    }
-
     void on_edge() {
-        for (auto &dec : decoders_list) {
+        for (auto dec : decoders_list) {
             if (dec->signal.read() != dec->prev_signal_val) {
                 dec->prev_signal_val = !dec->prev_signal_val;
             }
