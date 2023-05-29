@@ -5,10 +5,10 @@
 
 namespace RC5 {
     static constexpr size_t COMMAND_LEN = 14;
-    static const microseconds long_pulse = 1778us;
-    static const microseconds short_pulse = 889us;
-    static const microseconds med_pulse = (long_pulse + short_pulse) / 2;
-    static const microseconds max_long_pulse = 3000us;
+    static const std::chrono::microseconds long_pulse = 1778us;
+    static const std::chrono::microseconds short_pulse = 889us;
+    static const std::chrono::microseconds med_pulse = (long_pulse + short_pulse) / 2;
+    static const std::chrono::microseconds max_long_pulse = 3000us;
 
     Decoder::Decoder(PinName pin, std::map<uint8_t, Callback<void()>> commands) 
         : signal{pin}, commands{commands} 
@@ -35,7 +35,11 @@ namespace RC5 {
             clock.reset();
 
             if (good_startcode()) {
-                
+                for (auto & cmd : commands) {
+                    if (((command >> 8) & 0xFF) == cmd.first) {
+                        cmd.second();
+                    }
+                }
             }
             command = 0;
             return;
@@ -76,21 +80,21 @@ namespace RC5 {
         decode_bit(1);
     }
 
-    static std::list<Decoder> decoders_list;
+    static std::vector<Decoder *> decoders_list;
 
-    void init(std::list<Decoder> decoders) {
+    void init(std::vector<Decoder *> decoders) {
         decoders_list = decoders;    
     }
 
     void on_edge() {
         for (auto &dec : decoders_list) {
-            if (dec.signal.read() != dec.prev_signal_val) {
-                dec.prev_signal_val = !dec.prev_signal_val;
+            if (dec->signal.read() != dec->prev_signal_val) {
+                dec->prev_signal_val = !dec->prev_signal_val;
             }
-            if (dec.signal.read()) {
-                dec.decode_rise();
+            if (dec->signal.read()) {
+                dec->decode_rise();
             } else {
-                dec.decode_fall();
+                dec->decode_fall();
             }
         }
     }

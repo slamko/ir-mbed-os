@@ -17,9 +17,8 @@ RC5::Decoder d1 {D13, {
 
 int main()
 {
-    RC5::init(d1);
-    // Initialise the digital pin LED1 as an output
-
+    RC5::init({&d1});
+    
     while (true) {
     }
 }

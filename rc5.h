@@ -29,5 +29,5 @@ namespace RC5 {
     };
 
     void on_edge();
-    void init(std::list<Decoder> decoders);
+    void init(std::vector<Decoder *> decoders);
 }
