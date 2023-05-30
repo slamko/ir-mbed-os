@@ -1,6 +1,8 @@
 #include "mbed.h"
 #include "rc5.h"
 
+using namespace IR;
+
 // Blinking rate in milliseconds
 #define BLINKING_RATE     500ms
 DigitalOut led(LED1);
