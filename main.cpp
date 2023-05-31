@@ -1,5 +1,6 @@
 #include "mbed.h"
 #include "rc5.h"
+#include "sirc.h"
 
 using namespace IR;
 
@@ -19,6 +20,10 @@ RC5::Decoder d1 {D13, {
 
 RC5::Decoder d2 {D12, {
     {24, &blink}
+}};
+
+SIRC::Decoder sony_telecommande {D2, {
+    {1, &blink}
 }};
 
 int main()

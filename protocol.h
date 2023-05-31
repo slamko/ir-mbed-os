@@ -5,6 +5,8 @@
 #include <map>
 
 namespace IR {
+    #define GET_BIT(X, BIT) ((X & (1 << BIT)) >> BIT)
+
     class BaseDecoder {
     private:
         friend void on_edge();
@@ -13,21 +15,22 @@ namespace IR {
     protected:
         BaseDecoder(PinName pin, std::map<uint8_t, Callback<void()>> commands);
 
-        virtual void decode_fall() = 0;
-        virtual void decode_rise() = 0;
-
         InterruptIn signal;
         Timer clock;
 
         int prev_signal_val = 1;
         bool decoding = false;
-        uint16_t command;
-        uint8_t cur_bit;
+        uint16_t command = 0;
+        uint8_t cur_bit = 0;
 
+        void decode_bit(uint8_t bit);
+
+        virtual void decode_fall() = 0;
+        virtual void decode_rise() = 0;
+        virtual bool cmp_command(uint16_t cmd) = 0;
         virtual bool final_bit() = 0;
         virtual bool good_startcode() = 0;
         virtual void decode_reset() = 0;
-        void decode_bit(uint8_t bit);
 
         std::map<uint8_t, Callback<void()>> commands;
     };

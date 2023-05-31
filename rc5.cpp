@@ -15,9 +15,6 @@ namespace RC5 {
     Decoder::Decoder(PinName pin, std::map<uint8_t, Callback<void()>> commands) 
         : BaseDecoder(pin, commands) 
     {
-        signal.mode(PullNone);
-        signal.rise(&on_edge);
-        signal.fall(&on_edge);
         add_decoder_to_list(this);
     };
     
@@ -48,6 +45,10 @@ namespace RC5 {
 
     bool Decoder::final_bit() {
         return cur_bit >= COMMAND_LEN;
+    }
+
+    bool Decoder::cmp_command(uint16_t cmd) {
+        return cmd == ((command >> 8) & 0x3F);
     }
 
     void Decoder::decode_rise() {

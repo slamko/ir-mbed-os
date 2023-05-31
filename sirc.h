@@ -1,5 +1,5 @@
-#ifndef RC5_H
-#define RC5_H
+#ifndef SIRC_H
+#define SIRC_H
 
 #include "mbed.h"
 #include <map>
@@ -8,7 +8,7 @@
 #include "protocol.h"
 
 namespace IR {
-namespace RC5 {
+namespace SIRC {
     class Decoder : protected IR::BaseDecoder {
     public:
         Decoder(PinName pin, std::map<uint8_t, Callback<void()>> commands);

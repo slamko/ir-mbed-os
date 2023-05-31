@@ -18,7 +18,7 @@ namespace IR {
 
             if (good_startcode()) {
                 for (auto & cmd : commands) {
-                    if (((command >> 8) & 0xFF) == cmd.first) {
+                    if (cmp_command(cmd.first)) {
                         cmd.second();
                     }
                 }
@@ -31,7 +31,12 @@ namespace IR {
     }
 
     BaseDecoder::BaseDecoder(PinName pin, std::map<uint8_t, Callback<void()>> commands):
-        signal{pin}, commands{commands} {}
+        signal{pin}, commands{commands} 
+    {
+        signal.mode(PullNone);
+        signal.rise(&on_edge);
+        signal.fall(&on_edge);
+    }
 
     static std::vector<BaseDecoder *> decoders_list;
 
