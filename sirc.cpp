@@ -3,9 +3,9 @@
 namespace IR {
 namespace SIRC {
     static constexpr int COMMAND_LEN = 12;
-    static constexpr std::chrono::microseconds start_bit_pulse = 2000us;
-    static constexpr std::chrono::microseconds high_pulse = 1600us;
-    static constexpr std::chrono::microseconds low_pulse = 1000us;
+    static constexpr std::chrono::microseconds start_bit_pulse = 1720us;
+    static constexpr std::chrono::microseconds high_pulse = 1000us;
+    static constexpr std::chrono::microseconds low_pulse = 400us;
 
     Decoder::Decoder(PinName pin, std::map<uint8_t, Callback<void()>> commands) 
         : BaseDecoder(pin, commands) 
@@ -24,17 +24,8 @@ namespace SIRC {
         return cur_bit >= COMMAND_LEN;
     }
 
-    uint8_t inverse_bits(uint8_t command) {
-        for (int i = 0; i < 8; i++) {
-            command ^= ((command & (1 << i)) << (7 - i));
-            command ^= ((command & (1 << (7 - i))) << i);  
-            command ^= ((command & (1 << i)) << (7 - i));
-        }
-        return command;
-    }
-
     bool Decoder::cmp_command(uint16_t cmd) {
-        return cmd == inverse_bits((command >> 1) & 0x7F);
+        return cmd == ((command >> 1) & 0x7F);
     }
 
     bool Decoder::good_startcode() {
