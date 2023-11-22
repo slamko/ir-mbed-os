@@ -17,7 +17,7 @@ namespace RC5 {
         void decode_bit(uint8_t bit);
 
         bool final_bit() override;
-        bool good_startcode() override;
+        bool good_startcode(uint8_t) override;
         void decode_reset() override;
         void decode_fall() override;
         void decode_rise() override;

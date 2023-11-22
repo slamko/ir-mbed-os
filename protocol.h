@@ -29,7 +29,7 @@ namespace IR {
         virtual void decode_rise() = 0;
         virtual bool cmp_command(uint16_t cmd) = 0;
         virtual bool final_bit() = 0;
-        virtual bool good_startcode() = 0;
+        virtual bool good_startcode(uint8_t) = 0;
         virtual void decode_reset() = 0;
 
         std::map<uint8_t, Callback<void()>> commands;

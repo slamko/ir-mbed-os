@@ -18,14 +18,15 @@ namespace RC5 {
         add_decoder_to_list(this);
     };
     
-    bool Decoder::good_startcode() {
-        return ((command & (1 << 0)) && (command & (1 << 1)));
+    bool Decoder::good_startcode(uint8_t com) {
+        return ((com & (1 << 0)) && (com & (1 << 1)));
     }
 
     void Decoder::decode_reset() {
         command = 0;
         decoding = true;
         clock.reset();
+        clock.start();
         cur_bit = 0;
     }
 

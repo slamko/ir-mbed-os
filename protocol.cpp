@@ -11,19 +11,23 @@ namespace IR {
         cur_bit++;
 
         if (final_bit()) {
+            uint8_t com = command;
             decoding = false;
             cur_bit = 0;
+            
             clock.stop();
             clock.reset();
 
-            if (good_startcode()) {
+            if (good_startcode(com)) {
                 for (auto & cmd : commands) {
                     if (cmp_command(cmd.first)) {
                         cmd.second();
                     }
                 }
             }
+
             command = 0;
+
             return;
         }
 
